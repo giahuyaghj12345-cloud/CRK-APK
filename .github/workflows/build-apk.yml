@@ -1,4 +1,4 @@
-name: Build CRK Android APK
+name: Build CRK Standalone APK (Android)
 
 on:
   push:
@@ -14,8 +14,8 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-      - name: Unpack CRK Android source
-        run: unzip -q CRK_Android_Studio_Project_v1.1.1_BETA.zip
+      - name: Unpack standalone Android source
+        run: unzip -q -o CRK_Standalone_Auto_Source_v1.2_BETA.zip
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -26,15 +26,15 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.10.2'
-      - name: Test CRK bridge
-        working-directory: CRK_Android_Project
+      - name: Check CRK JavaScript bridge
+        working-directory: CRK_Standalone_Auto_Android_Project
         run: node tests/bridge.test.cjs
-      - name: Build debug APK
-        working-directory: CRK_Android_Project
-        run: sed -i '298s@ui.post(()->@String savedName=safe;ui.post(()->@;298s@+safe,Toast@+savedName,Toast@' app/src/main/java/com/crk/rawkeeper/MainActivity.java && gradle --no-daemon assembleDebug
-      - name: Upload APK
+      - name: Build standalone Android debug APK
+        working-directory: CRK_Standalone_Auto_Android_Project
+        run: gradle --no-daemon assembleDebug
+      - name: Upload standalone APK
         uses: actions/upload-artifact@v4
         with:
-          name: CRK-Android-APK
-          path: CRK_Android_Project/app/build/outputs/apk/debug/app-debug.apk
+          name: CRK-Standalone-Auto-UI-APK
+          path: CRK_Standalone_Auto_Android_Project/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
