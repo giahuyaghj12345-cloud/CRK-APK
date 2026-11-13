@@ -31,7 +31,7 @@ jobs:
         run: node tests/bridge.test.cjs
       - name: Build debug APK
         working-directory: CRK_Android_Project
-        run: gradle --no-daemon assembleDebug
+        run: sed -i '298s@ui.post(()->@String savedName=safe;ui.post(()->@;298s@+safe,Toast@+savedName,Toast@' app/src/main/java/com/crk/rawkeeper/MainActivity.java && gradle --no-daemon assembleDebug
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
